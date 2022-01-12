@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Jugi Light Controller</string>
+    <string name="color_title">Farbe</string>
+    <string name="light_title">Licht</string>
+    <string name="brightness">Helligkeit</string>
+    <string name="red">Rot</string>
+    <string name="green">Grün</string>
+    <string name="blue">Blau</string>
+
 </resources>
