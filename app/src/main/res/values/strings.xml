@@ -3,8 +3,8 @@
     <string name="color_title">Farbe</string>
     <string name="light_title">Licht</string>
     <string name="brightness">Helligkeit</string>
-    <string name="red">Rot</string>
-    <string name="green">Grün</string>
-    <string name="blue">Blau</string>
+    <string name="temperature">Temperatur</string>
+    <string name="min_temp">3200K</string>
+    <string name="max_temp">6000K</string>
 
 </resources>
