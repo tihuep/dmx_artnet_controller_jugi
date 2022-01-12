@@ -23,10 +23,27 @@ public class MainActivity extends AppCompatActivity {
         number3 = findViewById(R.id.number3);
         number4 = findViewById(R.id.number4);
 
+        number2.setText("0");
+        number3.setText("0");
+        number4.setText("0");
+
         number1.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                System.out.println("onprogresschanged");
+                System.out.println("onprogresschanged " + i);
+
+                byte dmx_brightness = (byte) (i * 1.27);
+                byte dmx_red = Byte.valueOf(number2.getText().toString());
+                byte dmx_green = Byte.valueOf(number3.getText().toString());
+                byte dmx_blue = Byte.valueOf(number4.getText().toString());
+
+                byte[] dmxData = new byte[512];
+                dmxData[0] = dmx_brightness;
+                dmxData[1] = dmx_red;
+                dmxData[2] = dmx_green;
+                dmxData[3] = dmx_blue;
+
+                new DMXSender().execute(dmxData);
             }
 
             @Override
