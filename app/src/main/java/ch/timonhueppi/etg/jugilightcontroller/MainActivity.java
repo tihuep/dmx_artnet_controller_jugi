@@ -14,9 +14,6 @@ import com.skydoves.colorpickerview.listeners.ColorListener;
 public class MainActivity extends AppCompatActivity {
 
     SeekBar number1;
-    EditText number2;
-    EditText number3;
-    EditText number4;
     ColorPickerView colorPicker;
 
     @Override
@@ -26,10 +23,6 @@ public class MainActivity extends AppCompatActivity {
 
         number1 = findViewById(R.id.number1);
         colorPicker = findViewById(R.id.colorPicker);
-
-        number2.setText("0");
-        number3.setText("0");
-        number4.setText("0");
 
         number1.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
