@@ -4,7 +4,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
+
+import com.skydoves.colorpickerview.ColorEnvelope;
+import com.skydoves.colorpickerview.ColorPickerView;
+import com.skydoves.colorpickerview.listeners.ColorListener;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -12,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
     EditText number2;
     EditText number3;
     EditText number4;
+    ColorPickerView colorPicker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,9 +25,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         number1 = findViewById(R.id.number1);
-        number2 = findViewById(R.id.number2);
-        number3 = findViewById(R.id.number3);
-        number4 = findViewById(R.id.number4);
+        colorPicker = findViewById(R.id.colorPicker);
 
         number2.setText("0");
         number3.setText("0");
@@ -32,18 +36,7 @@ public class MainActivity extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 System.out.println("onprogresschanged " + i);
 
-                byte dmx_brightness = (byte) (i * 1.27);
-                byte dmx_red = Byte.valueOf(number2.getText().toString());
-                byte dmx_green = Byte.valueOf(number3.getText().toString());
-                byte dmx_blue = Byte.valueOf(number4.getText().toString());
-
-                byte[] dmxData = new byte[512];
-                dmxData[0] = dmx_brightness;
-                dmxData[1] = dmx_red;
-                dmxData[2] = dmx_green;
-                dmxData[3] = dmx_blue;
-
-                new DMXSender().execute(dmxData);
+                setColor(new ColorEnvelope(colorPicker.getColor()).getArgb(), i);
             }
 
             @Override
@@ -56,5 +49,24 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println("onstoptrackingtouch");
             }
         });
+
+        colorPicker.setColorListener(new ColorListener() {
+            @Override
+            public void onColorSelected(int color, boolean fromUser) {
+                System.out.println(color);
+
+                setColor(new ColorEnvelope(color).getArgb(), number1.getProgress());
+            }
+        });
+    }
+
+    private void setColor(int[] rgb, int brightness){
+        byte[] dmxData = new byte[512];
+        dmxData[0] = (byte) (brightness * 1.27);
+        dmxData[1] = (byte) Math.floor(rgb[1]/2);
+        dmxData[2] = (byte) Math.floor(rgb[2]/2);
+        dmxData[3] = (byte) Math.floor(rgb[3]/2);
+
+        new DMXSender().execute(dmxData);
     }
 }

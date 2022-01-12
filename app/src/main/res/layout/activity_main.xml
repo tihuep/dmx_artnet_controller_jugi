@@ -48,70 +48,11 @@
                     android:layout_weight="1" />
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
 
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="10"
-                    android:text="@string/red"
-                    android:textAlignment="textEnd" />
-
-                <EditText
-                    android:id="@+id/number2"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:ems="10"
-                    android:inputType="number" />
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="10"
-                    android:text="@string/green"
-                    android:textAlignment="textEnd" />
-
-                <EditText
-                    android:id="@+id/number3"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:ems="10"
-                    android:inputType="number" />
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="10"
-                    android:text="@string/blue"
-                    android:textAlignment="textEnd" />
-
-                <EditText
-                    android:id="@+id/number4"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:ems="10"
-                    android:inputType="number" />
-            </LinearLayout>
+            <com.skydoves.colorpickerview.ColorPickerView
+                android:id="@+id/colorPicker"
+                android:layout_width="300dp"
+                android:layout_height="300dp" />
 
         </LinearLayout>
 
