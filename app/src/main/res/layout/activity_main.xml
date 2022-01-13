@@ -29,6 +29,10 @@
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="50dp" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -45,14 +49,27 @@
                     android:id="@+id/color_brightness"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:thumb="@drawable/thumb_image"/>
             </LinearLayout>
 
 
-            <com.skydoves.colorpickerview.ColorPickerView
-                android:id="@+id/color_picker"
-                android:layout_width="300dp"
-                android:layout_height="300dp" />
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="50dp" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <com.skydoves.colorpickerview.ColorPickerView
+                    android:id="@+id/color_picker"
+                    android:layout_width="300dp"
+                    android:layout_height="300dp" />
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -74,6 +91,10 @@
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="50dp" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -90,9 +111,14 @@
                     android:id="@+id/light_brightness"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:thumb="@drawable/thumb_image"/>
 
             </LinearLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="50dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -123,7 +149,8 @@
                         android:id="@+id/light_temp"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:thumb="@drawable/thumb_image"/>
 
                     <TextView
                         android:layout_width="fill_parent"
