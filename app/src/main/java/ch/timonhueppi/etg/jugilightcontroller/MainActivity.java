@@ -3,8 +3,6 @@ package ch.timonhueppi.etg.jugilightcontroller;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
 import com.skydoves.colorpickerview.ColorEnvelope;
@@ -13,52 +11,82 @@ import com.skydoves.colorpickerview.listeners.ColorListener;
 
 public class MainActivity extends AppCompatActivity {
 
-    SeekBar number1;
+    SeekBar colorBrightness;
     ColorPickerView colorPicker;
+    SeekBar lightBrightness;
+    SeekBar lightTemp;
+
+    byte[] dmxData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        number1 = findViewById(R.id.number1);
-        colorPicker = findViewById(R.id.colorPicker);
+        dmxData = new byte[512];
 
-        number1.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        colorBrightness = findViewById(R.id.color_brightness);
+        colorPicker = findViewById(R.id.color_picker);
+        lightBrightness = findViewById(R.id.light_brightness);
+        lightTemp = findViewById(R.id.light_temp);
+
+        colorBrightness.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                System.out.println("onprogresschanged " + i);
-
                 setColor(new ColorEnvelope(colorPicker.getColor()).getArgb(), i);
             }
-
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                System.out.println("onstarttrackingtouch");
-            }
-
+            public void onStartTrackingTouch(SeekBar seekBar) {}
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                System.out.println("onstoptrackingtouch");
-            }
+            public void onStopTrackingTouch(SeekBar seekBar) {}
         });
 
         colorPicker.setColorListener(new ColorListener() {
             @Override
             public void onColorSelected(int color, boolean fromUser) {
-                System.out.println(color);
-
-                setColor(new ColorEnvelope(color).getArgb(), number1.getProgress());
+                setColor(new ColorEnvelope(color).getArgb(), colorBrightness.getProgress());
             }
+        });
+
+        lightBrightness.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                setLight(lightTemp.getProgress(), i);
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
+
+        lightTemp.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                setLight(i, lightBrightness.getProgress());
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
         });
     }
 
     private void setColor(int[] rgb, int brightness){
-        byte[] dmxData = new byte[512];
         dmxData[0] = (byte) (brightness * 1.27);
         dmxData[1] = (byte) Math.floor(rgb[1]/2);
         dmxData[2] = (byte) Math.floor(rgb[2]/2);
         dmxData[3] = (byte) Math.floor(rgb[3]/2);
+
+        new DMXSender().execute(dmxData);
+    }
+
+    private void setLight(int temp, int brightness){
+        double brightnessFactor = brightness * 0.01;
+        double tempMultiplied = temp * 1.27;
+        byte cw = (byte) Math.floor(tempMultiplied * brightnessFactor);
+        byte ww = (byte) Math.floor((127 - tempMultiplied) * brightnessFactor);
+        dmxData[4] = cw;
+        dmxData[5] = ww;
 
         new DMXSender().execute(dmxData);
     }

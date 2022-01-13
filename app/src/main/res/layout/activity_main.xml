@@ -42,7 +42,7 @@
                     android:textAlignment="textEnd" />
 
                 <SeekBar
-                    android:id="@+id/number1"
+                    android:id="@+id/color_brightness"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1" />
@@ -50,7 +50,7 @@
 
 
             <com.skydoves.colorpickerview.ColorPickerView
-                android:id="@+id/colorPicker"
+                android:id="@+id/color_picker"
                 android:layout_width="300dp"
                 android:layout_height="300dp" />
 
