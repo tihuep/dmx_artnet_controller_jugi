@@ -83,10 +83,8 @@ public class MainActivity extends AppCompatActivity {
     private void setLight(int temp, int brightness){
         double brightnessFactor = brightness * 0.01;
         double tempMultiplied = temp * 1.27;
-        byte cw = (byte) Math.floor(tempMultiplied * brightnessFactor);
-        byte ww = (byte) Math.floor((127 - tempMultiplied) * brightnessFactor);
-        dmxData[4] = cw;
-        dmxData[5] = ww;
+        dmxData[4] = (byte) Math.floor(tempMultiplied * brightnessFactor);
+        dmxData[5] = (byte) Math.floor((127 - tempMultiplied) * brightnessFactor);
 
         new DMXSender().execute(dmxData);
     }
