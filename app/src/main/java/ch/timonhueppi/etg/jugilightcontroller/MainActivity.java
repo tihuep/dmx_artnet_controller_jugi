@@ -36,6 +36,9 @@ public class MainActivity extends AppCompatActivity {
     Button colorVariantSave;
     EditText colorVariantName;
     LinearLayout colorVariantContainer;
+    Button whiteVariantSave;
+    EditText whiteVariantName;
+    LinearLayout whiteVariantContainer;
     Button buttonSettings;
 
 
@@ -68,13 +71,17 @@ public class MainActivity extends AppCompatActivity {
         colorVariantSave = findViewById(R.id.color_variant_save);
         colorVariantName = findViewById(R.id.color_variant_name);
         colorVariantContainer = findViewById(R.id.color_variant_container);
+        whiteVariantSave = findViewById(R.id.white_variant_save);
+        whiteVariantName = findViewById(R.id.white_variant_name);
+        whiteVariantContainer = findViewById(R.id.white_variant_container);
         buttonSettings = findViewById(R.id.button_settings);
 
         //Sets all handlers of sliders, color pickers and buttons
         setHandlers();
 
-        VariantModel.loadColorVariants(getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE));
+        VariantModel.loadVariants(getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE));
         renderColorVariants();
+        renderWhiteVariants();
     }
 
     /**
@@ -140,15 +147,35 @@ public class MainActivity extends AppCompatActivity {
                     VariantModel.colorVariants.add(
                             new ColorVariant(
                                     colorVariantName.getText().toString().toUpperCase(),
-                                    (byte) Math.floor(colorBrightness.getProgress() * 1.27),
-                                    (byte) Math.floor(new ColorEnvelope(colorPicker.getColor()).getArgb()[1] / 2),
-                                    (byte) Math.floor(new ColorEnvelope(colorPicker.getColor()).getArgb()[2] / 2),
-                                    (byte) Math.floor(new ColorEnvelope(colorPicker.getColor()).getArgb()[3] / 2),
+                                    colorBrightness.getProgress(),
                                     colorPicker.getColor()
                             )
                     );
-                    VariantModel.saveColorVariants(getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE));
+                    VariantModel.saveVariants(getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE));
                     renderColorVariants();
+                }
+            }
+        });
+
+        //Handler of the white variant save button
+        whiteVariantSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!whiteVariantName.getText().toString().equals("")){
+                    for (WhiteVariant whiteVariant : VariantModel.whiteVariants) {
+                        if (whiteVariant.getName().equals(whiteVariantName.getText().toString().toUpperCase())){
+                            return;
+                        }
+                    }
+                    VariantModel.whiteVariants.add(
+                            new WhiteVariant(
+                                    whiteVariantName.getText().toString().toUpperCase(),
+                                    lightBrightness.getProgress(),
+                                    lightTemp.getProgress()
+                            )
+                    );
+                    VariantModel.saveVariants(getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE));
+                    renderWhiteVariants();
                 }
             }
         });
@@ -227,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     colorVariantName.setText(colorVariant.getName());
-                    colorBrightness.setProgress((int) Math.floor(colorVariant.getBrightness() / 1.27));
+                    colorBrightness.setProgress(colorVariant.getBrightness());
                     try {
                         colorPicker.selectByHsvColor(colorVariant.getHsv());
                     }catch (IllegalAccessException e){
@@ -239,13 +266,41 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public boolean onLongClick(View view) {
                     VariantModel.colorVariants.remove(colorVariant);
-                    VariantModel.saveColorVariants(getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE));
+                    VariantModel.saveVariants(getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE));
                     renderColorVariants();
                     return true;
                 }
             });
 
             colorVariantContainer.addView(variantButton);
+        }
+    }
+
+    private void renderWhiteVariants(){
+        whiteVariantContainer.removeAllViews();
+        for (WhiteVariant whiteVariant : VariantModel.whiteVariants) {
+            Button variantButton = new Button(this);
+            variantButton.setText(whiteVariant.getName());
+
+            variantButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    whiteVariantName.setText(whiteVariant.getName());
+                    lightBrightness.setProgress(whiteVariant.getBrightness());
+                    lightTemp.setProgress(whiteVariant.getTemperature());
+                }
+            });
+            variantButton.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    VariantModel.whiteVariants.remove(whiteVariant);
+                    VariantModel.saveVariants(getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE));
+                    renderWhiteVariants();
+                    return true;
+                }
+            });
+
+            whiteVariantContainer.addView(variantButton);
         }
     }
 }
