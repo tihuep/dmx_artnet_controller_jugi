@@ -7,13 +7,18 @@
     tools:context=".SettingsActivity">
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="500dp"
         android:layout_height="match_parent"
+        android:gravity="center_horizontal"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -23,8 +28,9 @@
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:text="@string/ip" />
+                android:layout_weight="2"
+                android:text="@string/ip"
+                android:textAlignment="viewStart" />
 
             <EditText
                 android:id="@+id/ip_address"
@@ -34,6 +40,11 @@
                 android:ems="10"
                 android:inputType="textPersonName" />
         </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -42,8 +53,9 @@
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:text="@string/ww_dmx" />
+                android:layout_weight="2"
+                android:text="@string/ww_dmx"
+                android:textAlignment="viewStart" />
 
             <EditText
                 android:id="@+id/ww_dmx"
@@ -53,6 +65,7 @@
                 android:ems="10"
                 android:inputType="textPersonName" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -61,8 +74,9 @@
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:text="@string/cw_dmx" />
+                android:layout_weight="2"
+                android:text="@string/cw_dmx"
+                android:textAlignment="viewStart" />
 
             <EditText
                 android:id="@+id/cw_dmx"
@@ -72,6 +86,11 @@
                 android:ems="10"
                 android:inputType="textPersonName" />
         </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="25dp" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -80,8 +99,9 @@
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:text="@string/rgbdimmer_dmx" />
+                android:layout_weight="2"
+                android:text="@string/rgbdimmer_dmx"
+                android:textAlignment="viewStart" />
 
             <EditText
                 android:id="@+id/rgbdimmer_dmx"
@@ -91,6 +111,7 @@
                 android:ems="10"
                 android:inputType="textPersonName" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -99,8 +120,9 @@
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:text="@string/rgbred_dmx" />
+                android:layout_weight="2"
+                android:text="@string/rgbred_dmx"
+                android:textAlignment="viewStart" />
 
             <EditText
                 android:id="@+id/rgbred_dmx"
@@ -110,6 +132,7 @@
                 android:ems="10"
                 android:inputType="textPersonName" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -118,8 +141,9 @@
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:text="@string/rgbgreen_dmx" />
+                android:layout_weight="2"
+                android:text="@string/rgbgreen_dmx"
+                android:textAlignment="viewStart" />
 
             <EditText
                 android:id="@+id/rgbgreen_dmx"
@@ -129,6 +153,7 @@
                 android:ems="10"
                 android:inputType="textPersonName" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -137,8 +162,9 @@
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:text="@string/rgbblue_dmx" />
+                android:layout_weight="2"
+                android:text="@string/rgbblue_dmx"
+                android:textAlignment="viewStart" />
 
             <EditText
                 android:id="@+id/rgbblue_dmx"
@@ -149,11 +175,15 @@
                 android:inputType="textPersonName" />
         </LinearLayout>
 
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
+
         <Button
             android:id="@+id/button_save"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Button" />
+            android:text="@string/save" />
 
         <TextView
             android:id="@+id/error_message"
