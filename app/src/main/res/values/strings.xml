@@ -6,5 +6,14 @@
     <string name="temperature">Temperatur</string>
     <string name="min_temp">3200K</string>
     <string name="max_temp">6000K</string>
+    <string name="ip">IP-Adresse</string>
+    <string name="rgbdimmer_dmx">Farbe Dimmer Kanal</string>
+    <string name="rgbred_dmx">Farbe Rot Kanal</string>
+    <string name="rgbgreen_dmx">Farbe Grün Kanal</string>
+    <string name="rgbblue_dmx">Farbe Blau Kanal</string>
+    <string name="ww_dmx">Warmweiss Kanal</string>
+    <string name="cw_dmx">Kaltweiss Kanal</string>
+    <string name="save">Sichern</string>
+    <string name="settings_error">Bitte Eingaben überprüfen</string>
 
 </resources>

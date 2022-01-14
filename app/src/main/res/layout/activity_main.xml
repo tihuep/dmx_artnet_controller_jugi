@@ -73,10 +73,29 @@
 
         </LinearLayout>
 
-        <View
-            android:layout_width="1dp"
+        <LinearLayout
+            android:layout_width="50dp"
             android:layout_height="match_parent"
-            android:background="#5C5C5C" />
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#5C5C5C" />
+
+            <Button
+                android:id="@+id/button_settings"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_weight="18"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:icon="@android:drawable/ic_menu_manage"
+                app:iconPadding="0dp" />
+        </LinearLayout>
+
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
