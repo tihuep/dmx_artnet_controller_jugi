@@ -1,5 +1,10 @@
 package ch.timonhueppi.etg.jugilightcontroller;
 
+/**
+ * @author Timon Hüppi @tihuep
+ * @version 1.0
+ * @since 2022/01/15
+ */
 public class ColorVariant {
 
     private String name;

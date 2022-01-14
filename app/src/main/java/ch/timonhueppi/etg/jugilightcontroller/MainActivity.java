@@ -20,7 +20,7 @@ import com.skydoves.colorpickerview.listeners.ColorListener;
 /**
  * @author Timon Hüppi @tihuep
  * @version 1.0
- * @since 2022/01/14
+ * @since 2022/01/15
  */
 public class MainActivity extends AppCompatActivity {
 
@@ -56,9 +56,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        /*SharedPreferences.Editor editor = getSharedPreferences("DMX", MODE_PRIVATE).edit();
-        editor.remove("color_variants");
-        editor.apply();*/
 
         //Creates 512 empty DMX channels (0)
         dmxData = new byte[512];
@@ -79,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
         //Sets all handlers of sliders, color pickers and buttons
         setHandlers();
 
+        //Loads and renders saved variants
         VariantModel.loadVariants(getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE));
         renderColorVariants();
         renderWhiteVariants();
@@ -138,12 +136,15 @@ public class MainActivity extends AppCompatActivity {
         colorVariantSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //Checks if name is empty
                 if (!colorVariantName.getText().toString().equals("")){
+                    //Checks if name already exists
                     for (ColorVariant colorVariant : VariantModel.colorVariants) {
                         if (colorVariant.getName().equals(colorVariantName.getText().toString().toUpperCase())){
                             return;
                         }
                     }
+                    //Adds new variant to list
                     VariantModel.colorVariants.add(
                             new ColorVariant(
                                     colorVariantName.getText().toString().toUpperCase(),
@@ -151,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
                                     colorPicker.getColor()
                             )
                     );
+                    //Saves and rerenders variants
                     VariantModel.saveVariants(getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE));
                     renderColorVariants();
                 }
@@ -161,12 +163,15 @@ public class MainActivity extends AppCompatActivity {
         whiteVariantSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //Checks if name is empty
                 if (!whiteVariantName.getText().toString().equals("")){
+                    //Checks if name already exists
                     for (WhiteVariant whiteVariant : VariantModel.whiteVariants) {
                         if (whiteVariant.getName().equals(whiteVariantName.getText().toString().toUpperCase())){
                             return;
                         }
                     }
+                    //Adds new variant to list
                     VariantModel.whiteVariants.add(
                             new WhiteVariant(
                                     whiteVariantName.getText().toString().toUpperCase(),
@@ -174,6 +179,7 @@ public class MainActivity extends AppCompatActivity {
                                     lightTemp.getProgress()
                             )
                     );
+                    //Saves and rerenders variants
                     VariantModel.saveVariants(getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE));
                     renderWhiteVariants();
                 }
@@ -244,47 +250,58 @@ public class MainActivity extends AppCompatActivity {
         DMXSender.IPAddress = sharedPreferences.getString("ip_address", "127.0.0.1");
     }
 
+    /**
+     * Renders all color variants that are saved
+     */
     private void renderColorVariants(){
+        //Clears already rendered variants
         colorVariantContainer.removeAllViews();
         for (ColorVariant colorVariant : VariantModel.colorVariants) {
+            //Instantiates new button and sets properties and handlers
             Button variantButton = new Button(this);
             variantButton.setText(colorVariant.getName());
-
             variantButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    //Loads saved values to UI elements
                     colorVariantName.setText(colorVariant.getName());
                     colorBrightness.setProgress(colorVariant.getBrightness());
                     try {
                         colorPicker.selectByHsvColor(colorVariant.getHsv());
                     }catch (IllegalAccessException e){
-                        //very nice error handling
+                        //Very nice error handling
                     }
                 }
             });
             variantButton.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
+                    //Removes long-pressed variant
                     VariantModel.colorVariants.remove(colorVariant);
                     VariantModel.saveVariants(getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE));
                     renderColorVariants();
                     return true;
                 }
             });
-
+            //Adds new variant-button to scroll view
             colorVariantContainer.addView(variantButton);
         }
     }
 
+    /**
+     * Renders all white variants that are saved
+     */
     private void renderWhiteVariants(){
+        //Clears already rendered variants
         whiteVariantContainer.removeAllViews();
         for (WhiteVariant whiteVariant : VariantModel.whiteVariants) {
+            //Instantiates new button and sets properties and handlers
             Button variantButton = new Button(this);
             variantButton.setText(whiteVariant.getName());
-
             variantButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    //Loads saved values to UI elements
                     whiteVariantName.setText(whiteVariant.getName());
                     lightBrightness.setProgress(whiteVariant.getBrightness());
                     lightTemp.setProgress(whiteVariant.getTemperature());
@@ -293,13 +310,14 @@ public class MainActivity extends AppCompatActivity {
             variantButton.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
+                    //Removes long-pressed variant
                     VariantModel.whiteVariants.remove(whiteVariant);
                     VariantModel.saveVariants(getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE));
                     renderWhiteVariants();
                     return true;
                 }
             });
-
+            //Adds new variant-button to scroll view
             whiteVariantContainer.addView(variantButton);
         }
     }

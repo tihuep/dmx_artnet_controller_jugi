@@ -13,7 +13,7 @@ import android.widget.TextView;
 /**
  * @author Timon Hüppi @tihuep
  * @version 1.0
- * @since 2022/01/14
+ * @since 2022/01/15
  */
 public class SettingsActivity extends AppCompatActivity {
 
