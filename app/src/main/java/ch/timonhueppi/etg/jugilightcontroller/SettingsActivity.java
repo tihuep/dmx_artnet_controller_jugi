@@ -10,8 +10,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+/**
+ * @author Timon Hüppi @tihuep
+ * @version 1.0
+ * @since 2022/01/14
+ */
 public class SettingsActivity extends AppCompatActivity {
 
+    /**
+     * UI elements
+     */
     EditText ipAddress;
     EditText rgbdimmerDmx;
     EditText rgbredDmx;
@@ -22,11 +30,17 @@ public class SettingsActivity extends AppCompatActivity {
     Button buttonSave;
     TextView error_message;
 
+    /**
+     * Here is where the magic of this activity happens
+     *
+     * @param savedInstanceState idk
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+        //Loads UI elements
         ipAddress = findViewById(R.id.ip_address);
         rgbdimmerDmx = findViewById(R.id.rgbdimmer_dmx);
         rgbredDmx = findViewById(R.id.rgbred_dmx);
@@ -37,15 +51,20 @@ public class SettingsActivity extends AppCompatActivity {
         buttonSave = findViewById(R.id.button_save);
         error_message = findViewById(R.id.error_message);
 
+        //Loads data from sharedprefs and fills input fields with current values
         populateFieldsWithData();
 
+        //Save button handler
         SettingsActivity context = this;
-
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //Checks if values entered are valid
                 if (validateFields()){
+                    //Hides error message
                     error_message.setVisibility(View.INVISIBLE);
+
+                    //Writes values entered to sharedprefs
                     SharedPreferences sharedPreferences = getSharedPreferences("DMX", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString("ip_address", ipAddress.getText().toString());
@@ -55,18 +74,21 @@ public class SettingsActivity extends AppCompatActivity {
                     editor.putInt("rgbblue_dmx", Integer.parseInt(rgbblueDmx.getText().toString()));
                     editor.putInt("ww_dmx", Integer.parseInt(wwDmx.getText().toString()));
                     editor.putInt("cw_dmx", Integer.parseInt(cwDmx.getText().toString()));
-
                     editor.apply();
 
+                    //Exits activity and returns to main activity
                     context.finish();
                 }else{
+                    //Displays error message
                     error_message.setVisibility(View.VISIBLE);
                 }
             }
         });
-
     }
 
+    /**
+     * Loads data from sharedprefs and fills input fields with current values
+     */
     private void populateFieldsWithData(){
         SharedPreferences sharedPreferences = getSharedPreferences("DMX", Context.MODE_PRIVATE);
 
@@ -79,7 +101,13 @@ public class SettingsActivity extends AppCompatActivity {
         cwDmx.setText(String.valueOf(sharedPreferences.getInt("cw_dmx", 0)));
     }
 
+    /**
+     * Checks if all data entered into input fields is valid. Because as we all know: Never trust user input. Very wise
+     *
+     * @return Boolean: data valid/data not valid
+     */
     private boolean validateFields(){
+        //Some regex magic I found on stackoverflow
         if (!ipAddress.getText().toString().matches("^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(\\.(?!$)|$)){4}$")){
             return false;
         }else if (!rgbdimmerDmx.getText().toString().matches("^[0-9]{1,3}$")){
