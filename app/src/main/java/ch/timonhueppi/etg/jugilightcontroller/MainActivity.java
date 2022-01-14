@@ -89,21 +89,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setColor(int[] rgb, int brightness){
+        SharedPreferences sharedPreferences = getSharedPreferences("DMX", Context.MODE_PRIVATE);
         getIP();
-        dmxData[2] = (byte) (brightness * 1.27);
-        dmxData[3] = (byte) Math.floor(rgb[1]/2);
-        dmxData[4] = (byte) Math.floor(rgb[2]/2);
-        dmxData[5] = (byte) Math.floor(rgb[3]/2);
+        dmxData[sharedPreferences.getInt("rgbdimmer_dmx", 0) - 1] = (byte) (brightness * 1.27);
+        dmxData[sharedPreferences.getInt("rgbred_dmx", 0) - 1] = (byte) Math.floor(rgb[1]/2);
+        dmxData[sharedPreferences.getInt("rgbgreen_dmx", 0) - 1] = (byte) Math.floor(rgb[2]/2);
+        dmxData[sharedPreferences.getInt("rgbblue_dmx", 0) - 1] = (byte) Math.floor(rgb[3]/2);
 
         new DMXSender().execute(dmxData);
     }
 
     private void setLight(int temp, int brightness){
+        SharedPreferences sharedPreferences = getSharedPreferences("DMX", Context.MODE_PRIVATE);
         getIP();
         double brightnessFactor = brightness * 0.01;
         double tempMultiplied = temp * 1.27;
-        dmxData[0] = (byte) Math.floor(tempMultiplied * brightnessFactor);
-        dmxData[1] = (byte) Math.floor((127 - tempMultiplied) * brightnessFactor);
+        dmxData[sharedPreferences.getInt("ww_dmx", 0) - 1] = (byte) Math.floor(tempMultiplied * brightnessFactor);
+        dmxData[sharedPreferences.getInt("cw_dmx", 0) - 1] = (byte) Math.floor((127 - tempMultiplied) * brightnessFactor);
 
         new DMXSender().execute(dmxData);
     }
