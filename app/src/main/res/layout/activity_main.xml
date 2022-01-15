@@ -38,19 +38,19 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="7"
-                    android:text="@string/brightness"
-                    android:textAlignment="textEnd" />
-
                 <SeekBar
                     android:id="@+id/color_brightness"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:thumb="@drawable/thumb_image" />
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:text="@string/brightness"
+                    android:textAlignment="viewStart" />
             </LinearLayout>
 
 
@@ -62,7 +62,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
                 android:orientation="horizontal">
 
                 <com.skydoves.colorpickerview.ColorPickerView
@@ -79,11 +78,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-
-                <Space
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
 
                 <Space
                     android:layout_width="fill_parent"
@@ -173,7 +167,7 @@
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="7"
+                    android:layout_weight="3"
                     android:text="@string/brightness"
                     android:textAlignment="textEnd" />
 
@@ -198,7 +192,7 @@
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="7"
+                    android:layout_weight="3"
                     android:text="@string/temperature"
                     android:textAlignment="textEnd" />
 
@@ -241,15 +235,12 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <Space
+                <Button
+                    android:id="@+id/white_variant_save"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-
-                <Space
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:text="@string/save" />
 
                 <EditText
                     android:id="@+id/white_variant_name"
@@ -259,12 +250,10 @@
                     android:ems="10"
                     android:inputType="textPersonName" />
 
-                <Button
-                    android:id="@+id/white_variant_save"
+                <Space
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/save" />
+                    android:layout_weight="1" />
 
             </LinearLayout>
 

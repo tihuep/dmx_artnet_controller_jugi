@@ -16,7 +16,7 @@
 
     <item>
         <shape android:shape="oval">
-            <solid android:color="@color/teal_200"/>
+            <solid android:color="@color/purple_200"/>
             <size android:width="30dp" android:height="30dp"/>
         </shape>
     </item>

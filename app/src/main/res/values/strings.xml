@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Jugi Light Controller</string>
-    <string name="color_title">Farbe</string>
-    <string name="light_title">Licht</string>
+    <string name="color_title">Farbiges Licht</string>
+    <string name="light_title">Weisses Licht</string>
     <string name="brightness">Helligkeit</string>
     <string name="temperature">Temperatur</string>
     <string name="min_temp">3200K</string>
@@ -15,5 +15,7 @@
     <string name="cw_dmx">Kaltweiss Kanal</string>
     <string name="save">Sichern</string>
     <string name="settings_error">Bitte Eingaben überprüfen</string>
+    <string name="settings_title">Einstellungen</string>
+    <string name="settings_warning">He hallo was machsch du da? Das därf nur de Timon ändere!</string>
 
 </resources>
