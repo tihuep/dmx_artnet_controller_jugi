@@ -210,10 +210,10 @@ public class MainActivity extends AppCompatActivity {
         getIP();
 
         //Calculates and consolidates values to a DMX byte-array
-        dmxData[sharedPreferences.getInt("rgbdimmer_dmx", 0) - 1] = (byte) (brightness * 1.27);
-        dmxData[sharedPreferences.getInt("rgbred_dmx", 0) - 1] = (byte) Math.floor(rgb[1]/2);
-        dmxData[sharedPreferences.getInt("rgbgreen_dmx", 0) - 1] = (byte) Math.floor(rgb[2]/2);
-        dmxData[sharedPreferences.getInt("rgbblue_dmx", 0) - 1] = (byte) Math.floor(rgb[3]/2);
+        dmxData[sharedPreferences.getInt("rgbdimmer_dmx", 1) - 1] = (byte) (brightness * 1.27);
+        dmxData[sharedPreferences.getInt("rgbred_dmx", 1) - 1] = (byte) Math.floor(rgb[1]/2);
+        dmxData[sharedPreferences.getInt("rgbgreen_dmx", 1) - 1] = (byte) Math.floor(rgb[2]/2);
+        dmxData[sharedPreferences.getInt("rgbblue_dmx", 1) - 1] = (byte) Math.floor(rgb[3]/2);
 
         //Sends DMX data
         new DMXSender().execute(dmxData);
@@ -235,8 +235,8 @@ public class MainActivity extends AppCompatActivity {
         //Calculates and consolidates values to a DMX byte-array
         double brightnessFactor = brightness * 0.01;
         double tempMultiplied = temp * 1.27;
-        dmxData[sharedPreferences.getInt("ww_dmx", 0) - 1] = (byte) Math.floor(tempMultiplied * brightnessFactor);
-        dmxData[sharedPreferences.getInt("cw_dmx", 0) - 1] = (byte) Math.floor((127 - tempMultiplied) * brightnessFactor);
+        dmxData[sharedPreferences.getInt("ww_dmx", 1) - 1] = (byte) Math.floor(tempMultiplied * brightnessFactor);
+        dmxData[sharedPreferences.getInt("cw_dmx", 1) - 1] = (byte) Math.floor((127 - tempMultiplied) * brightnessFactor);
 
         //Sends DMX data
         new DMXSender().execute(dmxData);
