@@ -1,20 +1,20 @@
-package ch.timonhueppi.etg.jugilightcontroller;
+package ch.timonhueppi.etg.jugilightcontroller.model;
 
 /**
  * @author Timon Hüppi @tihuep
  * @version 1.0
  * @since 2022/01/15
  */
-public class WhiteVariant {
+public class ColorVariant {
 
     private String name;
     private int brightness;
-    private int temperature;
+    private int hsv;
 
-    public WhiteVariant(String name, int brightness, int temperature) {
+    public ColorVariant(String name, int brightness, int hsv) {
         this.name = name;
         this.brightness = brightness;
-        this.temperature = temperature;
+        this.hsv = hsv;
     }
 
     public String getName() {
@@ -33,11 +33,11 @@ public class WhiteVariant {
         this.brightness = brightness;
     }
 
-    public int getTemperature() {
-        return temperature;
+    public int getHsv() {
+        return hsv;
     }
 
-    public void setTemperature(int temperature) {
-        this.temperature = temperature;
+    public void setHsv(int hsv) {
+        this.hsv = hsv;
     }
 }

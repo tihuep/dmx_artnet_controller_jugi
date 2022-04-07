@@ -1,26 +1,32 @@
 package ch.timonhueppi.etg.jugilightcontroller;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.skydoves.colorpickerview.ColorEnvelope;
 import com.skydoves.colorpickerview.ColorPickerView;
 import com.skydoves.colorpickerview.listeners.ColorListener;
 
+import ch.timonhueppi.etg.jugilightcontroller.model.ColorVariant;
+import ch.timonhueppi.etg.jugilightcontroller.model.VariantModel;
+import ch.timonhueppi.etg.jugilightcontroller.model.WhiteVariant;
+import ch.timonhueppi.etg.jugilightcontroller.util.DmxLightValuesController;
+
 /**
  * @author Timon Hüppi @tihuep
+ * @author Bastian Kappeler @bastkapp
  * @version 1.0
- * @since 2022/01/15
+ * @since 2022/04/08
  */
 public class MainActivity extends AppCompatActivity {
 
@@ -41,26 +47,41 @@ public class MainActivity extends AppCompatActivity {
     LinearLayout whiteVariantContainer;
     Button buttonSettings;
 
+    DmxLightValuesController dmx;
 
     /**
-     * 512 DMX channels
-     */
-    byte[] dmxData;
-
-    /**
-     * Here is where the magic of this activity happens
+     * {@inheritDoc}
      *
-     * @param savedInstanceState idk
+     * @param savedInstanceState saved instance state
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Creates 512 empty DMX channels (0)
-        dmxData = new byte[512];
+        // Initialize DMX data
+        dmx = new DmxLightValuesController(this);
 
-        //Loads UI elements to Java variables
+        initializeUiElements();
+
+        initializeHandlers();
+
+        loadAndRenderVariants();
+    }
+
+    /**
+     * Loads and renders the saved variants from the shared preferences
+     */
+    private void loadAndRenderVariants() {
+        VariantModel.loadVariants(getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE));
+        renderColorVariants();
+        renderWhiteVariants();
+    }
+
+    /**
+     * Initializes the UI elements
+     */
+    private void initializeUiElements() {
         colorBrightness = findViewById(R.id.color_brightness);
         colorPicker = findViewById(R.id.color_picker);
         lightBrightness = findViewById(R.id.light_brightness);
@@ -72,253 +93,247 @@ public class MainActivity extends AppCompatActivity {
         whiteVariantName = findViewById(R.id.white_variant_name);
         whiteVariantContainer = findViewById(R.id.white_variant_container);
         buttonSettings = findViewById(R.id.button_settings);
-
-        //Sets all handlers of sliders, color pickers and buttons
-        setHandlers();
-
-        //Loads and renders saved variants
-        VariantModel.loadVariants(getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE));
-        renderColorVariants();
-        renderWhiteVariants();
     }
 
     /**
-     * Sets all Handlers of Sliders, ColorPickers and Buttons
+     * Initializes the handlers
      */
-    private void setHandlers(){
-        MainActivity context = this;
+    private void initializeHandlers() {
 
-        //Handler of the color-brightness slider
-        colorBrightness.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                setColor(new ColorEnvelope(colorPicker.getColor()).getArgb(), i);
-            }
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
-        });
+        // Color-brightness slider handler
+        initializeColorBrightnessHandler();
 
-        //Handler of the color picker
-        colorPicker.setColorListener(new ColorListener() {
-            @Override
-            public void onColorSelected(int color, boolean fromUser) {
-                setColor(new ColorEnvelope(color).getArgb(), colorBrightness.getProgress());
-            }
-        });
+        // Color picker handler
+        initializeColorPickerHandler();
 
-        //Handler of the white-light-brightness slider
-        lightBrightness.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                setLight(lightTemp.getProgress(), i);
-            }
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
-        });
+        // White-light-brightness slider handler
+        initializeWhiteLightBrightnessHandler();
 
-        //Handler of the white-light-temperature slider
-        lightTemp.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                setLight(i, lightBrightness.getProgress());
-            }
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
-        });
+        // White-light-temperature slider handler
+        InitializeWhiteLightTemperatureHandler();
 
-        //Handler of the color variant save button
-        colorVariantSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Checks if name is empty
-                if (!colorVariantName.getText().toString().equals("")){
-                    //Checks if name already exists
-                    for (ColorVariant colorVariant : VariantModel.colorVariants) {
-                        if (colorVariant.getName().equals(colorVariantName.getText().toString().toUpperCase())){
-                            return;
-                        }
-                    }
-                    //Adds new variant to list
-                    VariantModel.colorVariants.add(
-                            new ColorVariant(
-                                    colorVariantName.getText().toString().toUpperCase(),
-                                    colorBrightness.getProgress(),
-                                    colorPicker.getColor()
-                            )
-                    );
-                    //Saves and rerenders variants
-                    VariantModel.saveVariants(getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE));
-                    renderColorVariants();
-                }
-            }
-        });
+        // Color variant save button handler
+        initializeColorVariantSaveHandler();
 
-        //Handler of the white variant save button
-        whiteVariantSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Checks if name is empty
-                if (!whiteVariantName.getText().toString().equals("")){
-                    //Checks if name already exists
-                    for (WhiteVariant whiteVariant : VariantModel.whiteVariants) {
-                        if (whiteVariant.getName().equals(whiteVariantName.getText().toString().toUpperCase())){
-                            return;
-                        }
-                    }
-                    //Adds new variant to list
-                    VariantModel.whiteVariants.add(
-                            new WhiteVariant(
-                                    whiteVariantName.getText().toString().toUpperCase(),
-                                    lightBrightness.getProgress(),
-                                    lightTemp.getProgress()
-                            )
-                    );
-                    //Saves and rerenders variants
-                    VariantModel.saveVariants(getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE));
-                    renderWhiteVariants();
-                }
-            }
-        });
+        // White variant save button handler
+        initializeWhiteVariantHandler();
 
-        //Handler of the settings-button
-        buttonSettings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(context, SettingsActivity.class);
-                startActivity(intent);
-            }
-        });
-    }
-
-    /**
-     * Sends new values of all color-light channels to DMX
-     *
-     * @param rgb Picked color (array of ints)
-     * @param brightness Picked brightness of light
-     */
-    private void setColor(int[] rgb, int brightness){
-        //Instantiates sharedprefs to read the specific DMX channels to send the values to
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
-
-        //Reads ip from sharedprefs and refreshes it in DMXSender
-        getIP();
-
-        //Calculates and consolidates values to a DMX byte-array
-        dmxData[sharedPreferences.getInt("rgbdimmer_dmx", 1) - 1] = (byte) (brightness * 1.27);
-        dmxData[sharedPreferences.getInt("rgbred_dmx", 1) - 1] = (byte) Math.floor(rgb[1]/2);
-        dmxData[sharedPreferences.getInt("rgbgreen_dmx", 1) - 1] = (byte) Math.floor(rgb[2]/2);
-        dmxData[sharedPreferences.getInt("rgbblue_dmx", 1) - 1] = (byte) Math.floor(rgb[3]/2);
-
-        //Sends DMX data
-        new DMXSender().execute(dmxData);
-    }
-
-    /**
-     * Sends new values of all white-light channels to DMX
-     *
-     * @param temp Picked color temperature (value 0-100; warm-cold)
-     * @param brightness Picked brightness of light
-     */
-    private void setLight(int temp, int brightness){
-        //Instantiates sharedprefs to read the specific DMX channels to send the values to
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
-
-        //Reads ip from sharedprefs and refreshes it in DMXSender
-        getIP();
-
-        //Calculates and consolidates values to a DMX byte-array
-        double brightnessFactor = brightness * 0.01;
-        double tempMultiplied = temp * 1.27;
-        dmxData[sharedPreferences.getInt("ww_dmx", 1) - 1] = (byte) Math.floor(tempMultiplied * brightnessFactor);
-        dmxData[sharedPreferences.getInt("cw_dmx", 1) - 1] = (byte) Math.floor((127 - tempMultiplied) * brightnessFactor);
-
-        //Sends DMX data
-        new DMXSender().execute(dmxData);
-    }
-
-    /**
-     * Reads ip from sharedprefs and refreshes it in DMXSender
-     */
-    private void getIP(){
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
-        DMXSender.IPAddress = sharedPreferences.getString("ip_address", "127.0.0.1");
+        // Settings-button handler
+        initializeSettingsButtonHandler();
     }
 
     /**
      * Renders all color variants that are saved
+     * <p>
+     * Buttons won't be rendered if the android version is lower than Nougat
      */
-    private void renderColorVariants(){
+    private void renderColorVariants() {
         //Clears already rendered variants
         colorVariantContainer.removeAllViews();
-        for (ColorVariant colorVariant : VariantModel.colorVariants) {
-            //Instantiates new button and sets properties and handlers
-            Button variantButton = new Button(this);
-            variantButton.setText(colorVariant.getName());
-            variantButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //Loads saved values to UI elements
-                    colorVariantName.setText(colorVariant.getName());
-                    colorBrightness.setProgress(colorVariant.getBrightness());
-                    try {
-                        colorPicker.selectByHsvColor(colorVariant.getHsv());
-                    }catch (IllegalAccessException e){
-                        //Very nice error handling
-                    }
-                }
-            });
-            variantButton.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    //Removes long-pressed variant
-                    VariantModel.colorVariants.remove(colorVariant);
-                    VariantModel.saveVariants(getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE));
-                    renderColorVariants();
-                    return true;
-                }
-            });
-            //Adds new variant-button to scroll view
-            colorVariantContainer.addView(variantButton);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            VariantModel.colorVariants.forEach(colorVariant -> colorVariantContainer.addView(createColorVariantButton(colorVariant)));
         }
     }
 
     /**
      * Renders all white variants that are saved
+     * <p>
+     * Buttons won't be rendered if the android version is lower than Nougat
      */
-    private void renderWhiteVariants(){
+    private void renderWhiteVariants() {
         //Clears already rendered variants
         whiteVariantContainer.removeAllViews();
-        for (WhiteVariant whiteVariant : VariantModel.whiteVariants) {
-            //Instantiates new button and sets properties and handlers
-            Button variantButton = new Button(this);
-            variantButton.setText(whiteVariant.getName());
-            variantButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //Loads saved values to UI elements
-                    whiteVariantName.setText(whiteVariant.getName());
-                    lightBrightness.setProgress(whiteVariant.getBrightness());
-                    lightTemp.setProgress(whiteVariant.getTemperature());
-                }
-            });
-            variantButton.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    //Removes long-pressed variant
-                    VariantModel.whiteVariants.remove(whiteVariant);
-                    VariantModel.saveVariants(getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE));
-                    renderWhiteVariants();
-                    return true;
-                }
-            });
-            //Adds new variant-button to scroll view
-            whiteVariantContainer.addView(variantButton);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            VariantModel.whiteVariants.forEach(whiteVariant -> whiteVariantContainer.addView(createWhiteVariantButton(whiteVariant)));
         }
+    }
+
+    /**
+     * Initializes a new color variant button with the specific handler
+     *
+     * @param colorVariant color variant to be rendered
+     * @return a button that represents the color variant
+     */
+    @NonNull
+    private Button createColorVariantButton(ColorVariant colorVariant) {
+        Button variantButton = new Button(this);
+        variantButton.setText(colorVariant.getName());
+
+        variantButton.setOnClickListener(view -> {
+            // Loads values to UI elements
+            colorVariantName.setText(colorVariant.getName());
+            colorBrightness.setProgress(colorVariant.getBrightness());
+
+            try {
+                colorPicker.selectByHsvColor(colorVariant.getHsv());
+            } catch (IllegalAccessException e) {
+                Log.e("ERROR", "Failed to select color", e);
+            }
+        });
+
+        variantButton.setOnLongClickListener(view -> {
+            // Removes variant
+            VariantModel.colorVariants.remove(colorVariant);
+            VariantModel.saveVariants(getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE));
+            renderColorVariants();
+            return true;
+        });
+
+        return variantButton;
+    }
+
+    @NonNull
+    private Button createWhiteVariantButton(WhiteVariant whiteVariant) {
+        Button variantButton = new Button(this);
+        variantButton.setText(whiteVariant.getName());
+
+        variantButton.setOnClickListener(view -> {
+            //Loads saved values to UI elements
+            whiteVariantName.setText(whiteVariant.getName());
+            lightBrightness.setProgress(whiteVariant.getBrightness());
+            lightTemp.setProgress(whiteVariant.getTemperature());
+        });
+
+        variantButton.setOnLongClickListener(view -> {
+            //Removes long-pressed variant
+            VariantModel.whiteVariants.remove(whiteVariant);
+            VariantModel.saveVariants(getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE));
+            renderWhiteVariants();
+            return true;
+        });
+        return variantButton;
+    }
+
+    /**
+     * Initializes the color-brightness slider handler
+     */
+    private void initializeColorBrightnessHandler() {
+        colorBrightness.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                dmx.setColor(new ColorEnvelope(colorPicker.getColor()).getArgb(), i);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+    }
+
+    /**
+     * Initializes the color picker handler
+     */
+    private void initializeColorPickerHandler() {
+        colorPicker.setColorListener((ColorListener) (color, fromUser) ->
+                dmx.setColor(new ColorEnvelope(color).getArgb(), colorBrightness.getProgress())
+        );
+    }
+
+    /**
+     * Initializes the white-light-brightness slider handler
+     */
+    private void initializeWhiteLightBrightnessHandler() {
+        lightBrightness.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                dmx.setLight(lightTemp.getProgress(), i);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+    }
+
+    /**
+     * Initializes the white-light-temperature slider handler
+     */
+    private void InitializeWhiteLightTemperatureHandler() {
+        lightTemp.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                dmx.setLight(i, lightBrightness.getProgress());
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+    }
+
+    /**
+     * Initializes the color variant save button handler
+     */
+    private void initializeColorVariantSaveHandler() {
+        colorVariantSave.setOnClickListener(view -> {
+            if (colorVariantName.getText().toString().isEmpty()) return;
+
+            // Checks if name already exists
+            for (ColorVariant colorVariant : VariantModel.colorVariants)
+                if (colorVariant.getName().equals(colorVariantName.getText().toString().toUpperCase()))
+                    return;
+
+            // Adds new variant to list
+            VariantModel.colorVariants.add(
+                    new ColorVariant(
+                            colorVariantName.getText().toString().toUpperCase(),
+                            colorBrightness.getProgress(),
+                            colorPicker.getColor()
+                    ));
+
+            // Saves and rerenders variants
+            VariantModel.saveVariants(getSharedPreferences(SHARED_PREFS, MODE_PRIVATE));
+            renderColorVariants();
+        });
+    }
+
+    /**
+     * Initializes the white variant save button handler
+     */
+    private void initializeWhiteVariantHandler() {
+        whiteVariantSave.setOnClickListener(view -> {
+            if (whiteVariantName.getText().toString().isEmpty()) return;
+
+            // Checks if name already exists
+            for (WhiteVariant whiteVariant : VariantModel.whiteVariants)
+                if (whiteVariant.getName().equals(whiteVariantName.getText().toString().toUpperCase()))
+                    return;
+
+            // Adds new variant to list
+            VariantModel.whiteVariants.add(
+                    new WhiteVariant(
+                            whiteVariantName.getText().toString().toUpperCase(),
+                            lightBrightness.getProgress(),
+                            lightTemp.getProgress()
+                    ));
+
+            // Saves and rerenders variants
+            VariantModel.saveVariants(getSharedPreferences(SHARED_PREFS, MODE_PRIVATE));
+            renderWhiteVariants();
+        });
+    }
+
+    /**
+     * Initializes the color variant delete button handler
+     */
+    private void initializeSettingsButtonHandler() {
+        buttonSettings.setOnClickListener(view -> {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+        });
     }
 }

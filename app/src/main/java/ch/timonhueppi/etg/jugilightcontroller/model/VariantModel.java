@@ -1,4 +1,4 @@
-package ch.timonhueppi.etg.jugilightcontroller;
+package ch.timonhueppi.etg.jugilightcontroller.model;
 
 import android.content.SharedPreferences;
 
@@ -35,8 +35,8 @@ public class VariantModel {
      *
      * @param sharedPreferences Sharedprefs reference from context (activity)
      */
-    public static void loadVariants(SharedPreferences sharedPreferences){
-        //Loads json strings from sharedprefs
+    public static void loadVariants(SharedPreferences sharedPreferences) {
+        // Loads json strings from sharedprefs
         String colorVariantsStr = sharedPreferences.getString(COLOR_VARIANTS, "[]");
         String whiteVariantsStr = sharedPreferences.getString(WHITE_VARIANTS, "[]");
 
@@ -44,7 +44,7 @@ public class VariantModel {
         Type colorListType = new TypeToken<ArrayList<ColorVariant>>(){}.getType();
         Type whiteListType = new TypeToken<ArrayList<WhiteVariant>>(){}.getType();
 
-        //Creates lists out of json string storing all variants
+        // Creates lists out of json string storing all variants
         colorVariants = new Gson().fromJson(colorVariantsStr, colorListType);
         whiteVariants = new Gson().fromJson(whiteVariantsStr, whiteListType);
     }
@@ -54,18 +54,18 @@ public class VariantModel {
      *
      * @param sharedPreferences Sharedprefs reference from context (activity)
      */
-    public static void saveVariants(SharedPreferences sharedPreferences){
-        //Produces json strings out of local variant lists
+    public static void saveVariants(SharedPreferences sharedPreferences) {
+        // Produces json strings out of local variant lists
         String colorVariantsStr = new Gson().toJson(colorVariants);
         String whiteVariantsStr = new Gson().toJson(whiteVariants);
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        //Clears current sharedprefs variant storage
+        // Clears current sharedprefs variant storage
         editor.remove(COLOR_VARIANTS);
         editor.remove(WHITE_VARIANTS);
 
-        //Saves json strings containing the variants to sharedprefs
+        // Saves json strings containing the variants to sharedprefs
         editor.putString(COLOR_VARIANTS, colorVariantsStr);
         editor.putString(WHITE_VARIANTS, whiteVariantsStr);
 

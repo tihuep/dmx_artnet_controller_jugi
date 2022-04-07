@@ -1,4 +1,4 @@
-package ch.timonhueppi.etg.jugilightcontroller;
+package ch.timonhueppi.etg.jugilightcontroller.util;
 
 import android.os.AsyncTask;
 
@@ -32,16 +32,16 @@ public class DMXSender extends AsyncTask<byte[], Integer, String> {
     @Override
     protected String doInBackground(byte[]... params) {
         byte[] dmxData = params[0];
-        //Instantiates Artnet DMX client
+        // Instantiates Artnet DMX client
         ArtNetClient artnet = new ArtNetClient();
         artnet.start();
 
-        //Sends dmx data
+        // Sends dmx data
         artnet.unicastDmx(IPAddress, 0, 0, dmxData);
 
         artnet.stop();
 
-        return "";
+        return "DMX Data sent";
     }
 
     @Override
