@@ -3,6 +3,7 @@ plugins {
 }
 
 android {
+    namespace "ch.timonhueppi.etg.jugilightcontroller"
     compileSdk 32
 
     defaultConfig {
